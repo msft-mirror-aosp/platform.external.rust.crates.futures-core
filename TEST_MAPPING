@@ -2,22 +2,10 @@
 {
   "presubmit": [
     {
-      "host": true,
-      "name": "futures-core_host_test_src_lib"
-    },
-    {
       "name": "futures-core_device_test_src_lib"
     },
     {
-      "host": true,
-      "name": "futures-util_host_test_src_lib"
-    },
-    {
       "name": "futures-util_device_test_src_lib"
-    },
-    {
-      "host": true,
-      "name": "tokio-macros_host_test_src_lib"
     }
   ]
 }
