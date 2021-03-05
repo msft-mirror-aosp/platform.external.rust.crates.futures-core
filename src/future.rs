@@ -4,6 +4,7 @@ use core::ops::DerefMut;
 use core::pin::Pin;
 use core::task::{Context, Poll};
 
+#[doc(no_inline)]
 pub use core::future::Future;
 
 /// An owned dynamically typed [`Future`] for use in cases where you can't
@@ -79,7 +80,7 @@ impl<F, T, E> TryFuture for F
     type Error = E;
 
     #[inline]
-    fn try_poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<F::Output> {
+    fn try_poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         self.poll(cx)
     }
 }
