@@ -1,7 +1,7 @@
 use core::cell::UnsafeCell;
 use core::fmt;
 use core::sync::atomic::AtomicUsize;
-use core::sync::atomic::Ordering::{AcqRel, Acquire, Release};
+use core::sync::atomic::Ordering::{Acquire, Release, AcqRel};
 use core::task::Waker;
 
 /// A synchronization primitive for task wakeup.
@@ -202,7 +202,10 @@ impl AtomicWaker {
         trait AssertSync: Sync {}
         impl AssertSync for Waker {}
 
-        Self { state: AtomicUsize::new(WAITING), waker: UnsafeCell::new(None) }
+        Self {
+            state: AtomicUsize::new(WAITING),
+            waker: UnsafeCell::new(None),
+        }
     }
 
     /// Registers the waker to be notified on calls to `wake`.
@@ -276,7 +279,8 @@ impl AtomicWaker {
                     // nothing to acquire, only release. In case of concurrent
                     // wakers, we need to acquire their releases, so success needs
                     // to do both.
-                    let res = self.state.compare_exchange(REGISTERING, WAITING, AcqRel, Acquire);
+                    let res = self.state.compare_exchange(
+                        REGISTERING, WAITING, AcqRel, Acquire);
 
                     match res {
                         Ok(_) => {
@@ -340,7 +344,9 @@ impl AtomicWaker {
                 //
                 // We just want to maintain memory safety. It is ok to drop the
                 // call to `register`.
-                debug_assert!(state == REGISTERING || state == REGISTERING | WAKING);
+                debug_assert!(
+                    state == REGISTERING ||
+                    state == REGISTERING | WAKING);
             }
         }
     }
@@ -385,8 +391,9 @@ impl AtomicWaker {
                 // not.
                 //
                 debug_assert!(
-                    state == REGISTERING || state == REGISTERING | WAKING || state == WAKING
-                );
+                    state == REGISTERING ||
+                    state == REGISTERING | WAKING ||
+                    state == WAKING);
                 None
             }
         }
