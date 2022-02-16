@@ -67,12 +67,14 @@ pub trait TryFuture: Future + private_try_future::Sealed {
     /// This method is a stopgap for a compiler limitation that prevents us from
     /// directly inheriting from the `Future` trait; in the future it won't be
     /// needed.
-    fn try_poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<Self::Ok, Self::Error>>;
+    fn try_poll(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+    ) -> Poll<Result<Self::Ok, Self::Error>>;
 }
 
 impl<F, T, E> TryFuture for F
-where
-    F: ?Sized + Future<Output = Result<T, E>>,
+    where F: ?Sized + Future<Output = Result<T, E>>
 {
     type Ok = T;
     type Error = E;
@@ -85,8 +87,8 @@ where
 
 #[cfg(feature = "alloc")]
 mod if_alloc {
-    use super::*;
     use alloc::boxed::Box;
+    use super::*;
 
     impl<F: FusedFuture + ?Sized + Unpin> FusedFuture for Box<F> {
         fn is_terminated(&self) -> bool {
