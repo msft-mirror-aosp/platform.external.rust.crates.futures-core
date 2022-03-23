@@ -1,4 +1,4 @@
-#[cfg(not(futures_no_atomic_cas))]
+#[cfg_attr(feature = "cfg-target-has-atomic", cfg(target_has_atomic = "ptr"))]
 mod atomic_waker;
-#[cfg(not(futures_no_atomic_cas))]
+#[cfg_attr(feature = "cfg-target-has-atomic", cfg(target_has_atomic = "ptr"))]
 pub use self::atomic_waker::AtomicWaker;
